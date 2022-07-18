@@ -10,14 +10,14 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:atlas-app-services-functions.helloWorld"
+        "onCommand:atlas-app-services-functions.runFunction"
 	],
 	"browser": "./dist/web/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "atlas-app-services-functions.helloWorld",
-				"title": "Hello World"
+				"command": "atlas-app-services-functions.runFunction",
+				"title": "Run Function"
 			}
 		]
 	},
