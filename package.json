@@ -19,7 +19,29 @@
 				"command": "atlas-app-services-functions.runFunction",
 				"title": "Run Function"
 			}
-		]
+		],
+		"configuration": {
+			"title": "Atlas App Services",
+			"properties": {
+				"atlasAppServices.publicApiKey": {
+					"type": ["string", "null"],
+					"default": null,
+					"description": "Public API Key generated for yourself in the Access Manager"
+				},
+				"atlasAppServices.privateApiKey": {
+					"type": ["string", "null"],
+					"default": null,
+					"description": "Private API Key generated for yourself in the Access Manager"
+				},
+				"atlasAppServices.hostname": {
+					"type": "string",
+					"default": "https://realm.mongodb.com",
+					"description": "The base hostname where your App is hosted (i.e. 'https://realm.mongodb.com')",
+					"pattern": "https?://.+(?<!\/)$",
+					"patternErrorMessage": "Hostname should begin with http or https and should not have a trailing slash"
+				}
+			}
+		}
 	},
 	"scripts": {
 		"test": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/index.js",
