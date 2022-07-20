@@ -1,70 +1,35 @@
-# atlas-app-services-functions README
+# Atlas App Services Functions
 
-This is the README for your extension "atlas-app-services-functions". After writing up a brief description, we recommend including the following sections.
+Easily develop, test, and run Atlas App Services functions from your IDE.
+
+With this extension you can see all of the App Services functions available to you across your MongoDB Atlas projects and Apps. You can pull the existing source of those functions into your editor to modify and edit in your editor rather than through the online editor. While developing your function, you can also run it locally, without having to copy the code into the online function and validate that it is working.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+### View existing functions
+From the Atlas App Services extension icon, you can see all over your available projects and their respective Apps. Under each App are the existing functions. When you click on one, the source code for that function will be opened in a new editor within VSCode.
 
-For example if there is an image subfolder under your extension project workspace:
+![view functions](media/view-functions.png)
 
-\!\[feature X\]\(images/feature-x.png\)
+### Develop functions
+From any open editor, you can run a function through Atlas App Services. Use the `Run Function` command, then select the project and App where you would like the function to run. You can find the value returned (or errors encounted) on the `Atlas App Services: Return` output frame. You can find log statements on the `Atlas App Services: Logs`.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+![run function demo](media/run-function-demo.gif)
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+You will need to have an existing MongoDB account and an Atlas cluster created. You will also need to have an Atlas App Services App created where your functions can be ran.
+
+In order for the extension to be able to run functions and fetch your existing functions, you will need to create an API key. You can follow the instructions [here](https://www.mongodb.com/docs/atlas/configure-api-access/#grant-programmatic-access-to-service) to create an API key.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+* `atlasAppServices.publicApiKey`: the public api key to access/administer your functions
+* `atlasAppServices.privateApiKey`: the private api key to access/administer your functions
+* `atlasAppServices.appServicesHostname`: the hostname where your App is hosted (i.e. 'https://realm.mongodb.com')
+* `atlasAppServices.atlastHostname`: the hostname where your Atlast cluster is hosted (i.e. 'https://cloud.mongodb.com')
+* `atlasAppServices.functionExecution`: the code that executes your function. Your function is named `exports` so you can call it by passing any arguments in to `exports(...args)`
 
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
