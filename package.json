@@ -10,7 +10,8 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:atlas-app-services-functions.runFunction"
+		"onCommand:atlas-app-services-functions.runFunction",
+		"onView:functions"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -53,12 +54,37 @@
 					"pattern": "https?://.+(?<!/)$",
 					"patternErrorMessage": "Hostname should begin with http or https and should not have a trailing slash"
 				},
+				"atlasAppServices.functionExecution": {
+					"type": "string",
+					"default": "exports('Hello World!')",
+					"description": "Javascript code that executes your function. Your function is named `exports` so you can call it by passing any arguments in to `exports(...args)`",
+					"pattern": "exports(.*)",
+					"patternErrorMessage": "You should be calling `exports` somewhere in the execution"
+				},
 				"atlasAppServices.useLocalAuth": {
 					"type": "boolean",
 					"default": false,
 					"description": "For internal use"
 				}
 			}
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "atlasAppServices",
+					"title": "Atlas App Services",
+					"icon": "media/mongodb-icon.svg"
+				}
+			]
+		},
+		"views": {
+			"atlasAppServices": [
+				{
+					"id": "functions",
+					"name": "Functions",
+					"icon": "media/mongodb-icon.svg"
+				}
+			]
 		}
 	},
 	"scripts": {

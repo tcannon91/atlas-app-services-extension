@@ -1,17 +1,37 @@
 import * as vscode from 'vscode';
 import { fetchUserGroups } from './atlas-requests';
-import { executeFunctionAgainstServer, fetchAccessToken, fetchApps } from './baas-requests';
+import { BaasFunctionsProvider } from './baas-function-provider';
+import { executeFunctionAgainstServer, fetchAccessToken, fetchApps, fetchFunctionDetails } from './baas-requests';
 
-import { ATLAS_APP_SERVICES_CONFIG_NAME, DEFAULT_RUNNER } from './constants';
+import { ATLAS_APP_SERVICES_CONFIG_NAME } from './constants';
 import { getIdFromQuickPick } from './user-quickpicks';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	console.log('"atlas-app-services-functions" is now active in the web extension host!');
+
+	const atlasAppServicesConfig = vscode.workspace.getConfiguration(ATLAS_APP_SERVICES_CONFIG_NAME);
+	const publicApiKey = atlasAppServicesConfig.get<string>('publicApiKey');
+	const privateApiKey = atlasAppServicesConfig.get<string>('privateApiKey');
+	const appServicesHostname = atlasAppServicesConfig.get<string>('appServicesHostname');
+	const atlasHostname = atlasAppServicesConfig.get<string>('atlasHostname');
+
+	if (!publicApiKey || !privateApiKey || !appServicesHostname || !atlasHostname) {
+		vscode.window.showInformationMessage('Public and Private API keys must be added to the config before using');
+		return;
+	}
+
+	const baasFunctionTreeProvider = new BaasFunctionsProvider(
+		appServicesHostname,
+		atlasHostname,
+		publicApiKey,
+		privateApiKey,
+	);
+
+	vscode.window.registerTreeDataProvider('functions', baasFunctionTreeProvider);
 
 	// Runs the function in the current editor against the baas server
-	let disposable = vscode.commands.registerCommand('atlas-app-services-functions.runFunction', async () => {
+	context.subscriptions.push(vscode.commands.registerCommand('atlas-app-services-functions.runFunction', async () => {
 		// Get the active text editor
         const editor = vscode.window.activeTextEditor;
 
@@ -19,14 +39,9 @@ export function activate(context: vscode.ExtensionContext) {
 			vscode.window.showInformationMessage('You must have an open editor to run as a function');
 			return;
 		}
-
-		const atlasAppServicesConfig = vscode.workspace.getConfiguration(ATLAS_APP_SERVICES_CONFIG_NAME);
-		const publicApiKey = atlasAppServicesConfig.get<string>('publicApiKey');
-		const privateApiKey = atlasAppServicesConfig.get<string>('privateApiKey');
-		const appServicesHostname = atlasAppServicesConfig.get<string>('appServicesHostname');
-		const atlasHostname = atlasAppServicesConfig.get<string>('atlasHostname');
-
-		if (!publicApiKey || !privateApiKey || !appServicesHostname || !atlasHostname) {
+		
+		const executeSource = atlasAppServicesConfig.get<string>('functionExecution');
+		if (!executeSource) {
 			vscode.window.showInformationMessage('Public and Private API keys must be added to the config before using');
 			return;
 		}
@@ -70,7 +85,7 @@ export function activate(context: vscode.ExtensionContext) {
 				groupId,
 				appId,
 				documentText,
-				DEFAULT_RUNNER
+				executeSource
 			);
 
 			if (executeFunctionResult.logs?.length) {
@@ -84,10 +99,38 @@ export function activate(context: vscode.ExtensionContext) {
 			const castErr = err as Error;
 			returnChannel.appendLine(castErr.message);
 		}
-	});
+	}));
 
-	context.subscriptions.push(disposable);
+
+	context.subscriptions.push(vscode.commands.registerCommand('atlas-app-services-functions.loadFunctionIntoEditor', async (
+		groupId: string,
+		appId: string,
+		functionId: string
+	) => {
+		const accessToken = await fetchAccessToken(
+			appServicesHostname,
+			publicApiKey,
+			privateApiKey,
+		);
+
+		if (!accessToken) { return; }
+
+		const functionDetails = await fetchFunctionDetails(
+			accessToken,
+			appServicesHostname,
+			groupId,
+			appId,
+			functionId,
+		);
+
+		if (!functionDetails?.source) { return; }
+
+		const sourceDoc = await vscode.workspace.openTextDocument();
+		const editor = await vscode.window.showTextDocument(sourceDoc);
+		editor.edit((editBuilder) => {
+			editBuilder.insert(new vscode.Position(0 ,0), functionDetails.source!);
+		});
+	}));
 }
 
-// this method is called when your extension is deactivated
 export function deactivate() {}
