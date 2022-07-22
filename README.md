@@ -30,6 +30,10 @@ In order for the extension to be able to run functions and fetch your existing f
 * `atlasAppServices.atlastHostname`: the hostname where your Atlast cluster is hosted (i.e. 'https://cloud.mongodb.com')
 * `atlasAppServices.functionExecution`: the code that executes your function. Your function is named `exports` so you can call it by passing any arguments in to `exports(...args)`
 
+## Known Issues
+
+- In order for this to work, we need to loosen the CORS settings on BAAS. I had to adjust my local BAAS instance to allow all incoming hosts. This could possibly be more specific, but I haven't found docs on the specific host/port that VSCode makes requests from
+   - An alternative solution would be to make public endpoints for the things that are fetched by this extension
 
 ## Release Notes
 
